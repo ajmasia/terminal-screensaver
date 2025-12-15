@@ -82,6 +82,12 @@ rm -rf ~/.local/state/slimbook-screensaver
 - `jq` - JSON parsing
 - `libnotify-bin` - Desktop notifications
 
-## Credits
+## Acknowledgments
 
-Based on the screensaver from [Omarchy](https://github.com/basecamp/omarchy) by DHH.
+This project is inspired by the screensaver from [Omarchy](https://github.com/basecamp/omarchy), created by David Heinemeier Hansson (DHH) and Basecamp, released under the MIT License.
+
+The original implementation was designed for Arch Linux with Hyprland. This version has been adapted and rewritten for Debian 13 + GNOME, with modifications including:
+
+- GNOME Mutter D-Bus integration for idle detection (replacing hypridle)
+- Kitty terminal emulator support
+- Standalone installation without Omarchy dependencies
