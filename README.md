@@ -1,6 +1,6 @@
 # Terminal Screensaver
 
-![Version](https://img.shields.io/badge/version-0.3.0-blue)
+![Version](https://img.shields.io/badge/version-0.3.1-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 ![Python](https://img.shields.io/badge/python-3.8%2B-yellow)
 ![Platform](https://img.shields.io/badge/platform-linux-lightgrey)
