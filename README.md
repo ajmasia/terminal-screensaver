@@ -45,7 +45,24 @@ SLIMBOOK_SCREENSAVER_IDLE_TIMEOUT=120
 SLIMBOOK_SCREENSAVER_FRAME_RATE=60
 ```
 
-Custom ASCII art: edit `~/.local/share/slimbook-screensaver/screensaver.txt`
+### Custom ASCII Art
+
+Edit `~/.config/slimbook-screensaver/screensaver.txt` with your own text or ASCII art.
+
+**Online generators:**
+- [patorjk.com/software/taag](https://patorjk.com/software/taag/) - Text to ASCII
+- [ascii-art-generator.org](https://www.ascii-art-generator.org/) - Image to ASCII
+- [asciiart.eu](https://www.asciiart.eu/) - ASCII art collection
+
+**From terminal:**
+```bash
+# Install generators
+sudo apt install figlet toilet
+
+# Generate ASCII art
+figlet -f slant "Your Text" > ~/.config/slimbook-screensaver/screensaver.txt
+toilet -f future "Your Text" > ~/.config/slimbook-screensaver/screensaver.txt
+```
 
 ## Usage
 
