@@ -110,6 +110,12 @@ terminal-screensaver-update --force   # Force reinstall current version
 - Terminal: `alacritty`, `gnome-terminal`, or `ptyxis`
 - `jq`, `curl`
 
+## Contributing
+
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for development setup and guidelines.
+
+For release process, see [RELEASING.md](.github/RELEASING.md).
+
 ## Acknowledgments
 
 Inspired by the screensaver from [Omarchy](https://github.com/basecamp/omarchy) by David Heinemeier Hansson (DHH) and Basecamp (MIT License).
