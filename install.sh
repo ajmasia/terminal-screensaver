@@ -8,7 +8,19 @@ echo "=== Installing Slimbook EVO Screensaver for Debian 13 + GNOME ==="
 echo "[1/5] Checking system dependencies..."
 MISSING_PKGS=""
 
-command -v python3 &>/dev/null || MISSING_PKGS="$MISSING_PKGS python3-pip python3-venv"
+# Check Python 3.8+ is available
+if command -v python3 &>/dev/null; then
+    PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+    PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
+    PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
+    if [[ $PYTHON_MAJOR -lt 3 ]] || [[ $PYTHON_MAJOR -eq 3 && $PYTHON_MINOR -lt 8 ]]; then
+        echo "  Error: Python 3.8+ required, found $PYTHON_VERSION"
+        exit 1
+    fi
+    echo "  Python $PYTHON_VERSION found"
+else
+    MISSING_PKGS="$MISSING_PKGS python3-pip python3-venv"
+fi
 command -v jq &>/dev/null || MISSING_PKGS="$MISSING_PKGS jq"
 
 # Check for at least one supported terminal

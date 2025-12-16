@@ -1,6 +1,11 @@
-# Slimbook EVO Screensaver for Debian 13 + GNOME
+# Slimbook EVO Screensaver
 
-A terminal-based screensaver with animated text effects, adapted from [Omarchy](https://omarchy.org) for Debian 13 with GNOME.
+A terminal-based screensaver with animated text effects, adapted from [Omarchy](https://omarchy.org).
+
+## Compatibility
+
+- **Debian 13+** with GNOME (tested)
+- **Ubuntu 22.04+** with GNOME (should work)
 
 ## Features
 
@@ -77,10 +82,10 @@ rm -rf ~/.local/state/slimbook-screensaver
 
 ## Dependencies
 
-- `python3-pip`, `python3-venv` - For tte installation
-- `kitty` - Terminal emulator (fullscreen support)
+- **Python 3.8+** - For tte installation
+- `python3-pip`, `python3-venv` - Python package management
+- `alacritty`, `gnome-terminal`, or `ptyxis` - Terminal emulator
 - `jq` - JSON parsing
-- `libnotify-bin` - Desktop notifications
 
 ## Acknowledgments
 
