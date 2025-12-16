@@ -1,7 +1,7 @@
 #!/bin/bash
 # Toggle screensaver on/off - adapted from Omarchy for GNOME/Debian
 
-STATE_FILE="$HOME/.local/state/slimbook-screensaver/screensaver-off"
+STATE_FILE="$HOME/.local/state/terminal-screensaver/screensaver-off"
 
 if [[ -f "$STATE_FILE" ]]; then
     rm -f "$STATE_FILE"

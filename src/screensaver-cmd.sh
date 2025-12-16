@@ -1,7 +1,7 @@
 #!/bin/bash
 # Main screensaver logic - adapted from Omarchy for GNOME/Debian
 
-SCREENSAVER_DIR="$HOME/.local/share/slimbook-screensaver"
+SCREENSAVER_DIR="$HOME/.local/share/terminal-screensaver"
 TTE_BIN="$HOME/.local/bin/tte"
 
 # Load configuration
@@ -22,7 +22,7 @@ exit_screensaver() {
     log "Screensaver exiting (reason: $EXIT_REASON)"
     pkill -x tte 2>/dev/null
     printf '\033[?25h'  # show cursor
-    pkill -f "class.*slimbook.screensaver" 2>/dev/null
+    pkill -f "class.*terminal.screensaver" 2>/dev/null
     exit 0
 }
 
@@ -33,15 +33,15 @@ printf '\033]11;rgb:00/00/00\007'
 printf '\033[?25l'
 
 while true; do
-    "$TTE_BIN" -i "$SLIMBOOK_SCREENSAVER_ASCII_FILE" \
-        --frame-rate "$SLIMBOOK_SCREENSAVER_FRAME_RATE" \
+    "$TTE_BIN" -i "$TERMINAL_SCREENSAVER_ASCII_FILE" \
+        --frame-rate "$TERMINAL_SCREENSAVER_FRAME_RATE" \
         --canvas-width 0 \
         --canvas-height 0 \
         --reuse-canvas \
         --anchor-canvas c \
         --anchor-text c \
         --random-effect \
-        --exclude-effects "$SLIMBOOK_SCREENSAVER_EXCLUDE_EFFECTS" \
+        --exclude-effects "$TERMINAL_SCREENSAVER_EXCLUDE_EFFECTS" \
         --no-eol \
         --no-restore-cursor &
 

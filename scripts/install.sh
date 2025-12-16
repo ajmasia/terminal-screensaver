@@ -1,29 +1,22 @@
 #!/bin/bash
-# Slimbook EVO screensaver installer
+# Terminal screensaver installer
 # Supports both local (cloned repo) and remote (download release) installation
 set -e
 
-REPO_URL="https://github.com/ajmasia/slimbook-screensaver"
-INSTALL_DIR="$HOME/.local/share/slimbook-screensaver"
-CONFIG_DIR="$HOME/.config/slimbook-screensaver"
+REPO_URL="https://github.com/ajmasia/terminal-screensaver"
+INSTALL_DIR="$HOME/.local/share/terminal-screensaver"
+CONFIG_DIR="$HOME/.config/terminal-screensaver"
 
-# Files to install to INSTALL_DIR
-INSTALL_FILES=(
-    "screensaver-cmd.sh"
-    "screensaver-launch.sh"
-    "screensaver-toggle.sh"
-    "screensaver.conf"
-    "uninstall.sh"
-    "VERSION"
-)
-
-# Files to install to CONFIG_DIR
-CONFIG_FILES=(
-    "screensaver.txt"
+# Source files (relative to repo root)
+SRC_FILES=(
+    "src/screensaver-cmd.sh"
+    "src/screensaver-launch.sh"
+    "src/screensaver-toggle.sh"
+    "src/screensaver.conf"
 )
 
 show_help() {
-    echo "Slimbook EVO Screensaver Installer"
+    echo "Terminal Screensaver Installer"
     echo ""
     echo "Usage: ./install.sh [OPTIONS]"
     echo ""
@@ -38,18 +31,10 @@ show_help() {
 }
 
 detect_source() {
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-    # Check if we're in the repo with all required files
-    local all_files_exist=true
-    for file in "${INSTALL_FILES[@]}" "${CONFIG_FILES[@]}"; do
-        if [[ ! -f "$SCRIPT_DIR/$file" ]]; then
-            all_files_exist=false
-            break
-        fi
-    done
-
-    if [[ "$all_files_exist" == "true" ]]; then
+    # Check if we're in the repo with the expected structure
+    if [[ -f "$REPO_ROOT/src/screensaver-cmd.sh" ]] && \
+       [[ -f "$REPO_ROOT/assets/screensaver.txt" ]] && \
+       [[ -f "$REPO_ROOT/VERSION" ]]; then
         echo "local"
     else
         echo "remote"
@@ -61,7 +46,7 @@ download_release() {
 
     # Get latest release tag
     local latest_tag
-    latest_tag=$(curl -fsSL "https://api.github.com/repos/ajmasia/slimbook-screensaver/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
+    latest_tag=$(curl -fsSL "https://api.github.com/repos/ajmasia/terminal-screensaver/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
 
     if [[ -z "$latest_tag" ]]; then
         echo "  Error: Could not fetch latest release"
@@ -82,10 +67,10 @@ download_release() {
     # Extract
     tar -xzf "$TEMP_DIR/release.tar.gz" -C "$TEMP_DIR"
 
-    # Find extracted directory (format: slimbook-screensaver-X.X.X or slimbook-screensaver-vX.X.X)
-    SOURCE_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "slimbook-screensaver-*" | head -1)
+    # Find extracted directory
+    REPO_ROOT=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "terminal-screensaver-*" | head -1)
 
-    if [[ -z "$SOURCE_DIR" ]]; then
+    if [[ -z "$REPO_ROOT" ]]; then
         echo "  Error: Could not find extracted files"
         exit 1
     fi
@@ -141,9 +126,16 @@ install_tte() {
 install_files() {
     echo "[3/5] Installing screensaver scripts..."
 
-    for file in "${INSTALL_FILES[@]}"; do
-        cp "$SOURCE_DIR/$file" "$INSTALL_DIR/"
+    # Copy source files
+    for file in "${SRC_FILES[@]}"; do
+        cp "$REPO_ROOT/$file" "$INSTALL_DIR/"
     done
+
+    # Copy uninstall script
+    cp "$REPO_ROOT/scripts/uninstall.sh" "$INSTALL_DIR/"
+
+    # Copy VERSION
+    cp "$REPO_ROOT/VERSION" "$INSTALL_DIR/"
 
     chmod +x "$INSTALL_DIR/screensaver-cmd.sh"
     chmod +x "$INSTALL_DIR/screensaver-launch.sh"
@@ -151,9 +143,9 @@ install_files() {
     chmod +x "$INSTALL_DIR/uninstall.sh"
 
     # Create symlinks in ~/.local/bin
-    ln -sf "$INSTALL_DIR/screensaver-launch.sh" ~/.local/bin/slimbook-screensaver
-    ln -sf "$INSTALL_DIR/screensaver-toggle.sh" ~/.local/bin/slimbook-screensaver-toggle
-    ln -sf "$INSTALL_DIR/uninstall.sh" ~/.local/bin/slimbook-screensaver-uninstall
+    ln -sf "$INSTALL_DIR/screensaver-launch.sh" ~/.local/bin/terminal-screensaver
+    ln -sf "$INSTALL_DIR/screensaver-toggle.sh" ~/.local/bin/terminal-screensaver-toggle
+    ln -sf "$INSTALL_DIR/uninstall.sh" ~/.local/bin/terminal-screensaver-uninstall
 }
 
 create_config() {
@@ -162,7 +154,7 @@ create_config() {
 
     # Copy ASCII art to config dir if it doesn't exist
     if [[ ! -f "$CONFIG_DIR/screensaver.txt" ]]; then
-        cp "$SOURCE_DIR/screensaver.txt" "$CONFIG_DIR/"
+        cp "$REPO_ROOT/assets/screensaver.txt" "$CONFIG_DIR/"
         echo "  Copied screensaver.txt to $CONFIG_DIR/"
     else
         echo "  ASCII art already exists at $CONFIG_DIR/screensaver.txt (preserved)"
@@ -170,26 +162,26 @@ create_config() {
 
     if [[ ! -f "$CONFIG_DIR/screensaver.conf" ]]; then
         cat > "$CONFIG_DIR/screensaver.conf" << 'CONFIG_EOF'
-# Slimbook Screensaver Configuration
+# Terminal Screensaver Configuration
 # Edit this file to customize your screensaver
 
 # Terminal to use: alacritty (default), gnome-terminal, ptyxis
-SLIMBOOK_SCREENSAVER_TERMINAL=alacritty
+TERMINAL_SCREENSAVER_TERMINAL=alacritty
 
-# Path to ASCII art file (default: ~/.config/slimbook-screensaver/screensaver.txt)
-# SLIMBOOK_SCREENSAVER_ASCII_FILE=$HOME/.config/slimbook-screensaver/screensaver.txt
+# Path to ASCII art file (default: ~/.config/terminal-screensaver/screensaver.txt)
+# TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/screensaver.txt
 
 # Idle timeout in seconds before screensaver activates (default: 120 = 2 min)
-# SLIMBOOK_SCREENSAVER_IDLE_TIMEOUT=120
+# TERMINAL_SCREENSAVER_IDLE_TIMEOUT=120
 
 # Animation frame rate (default: 60)
-# SLIMBOOK_SCREENSAVER_FRAME_RATE=60
+# TERMINAL_SCREENSAVER_FRAME_RATE=60
 
 # Effects to exclude, comma-separated (default: dev_worm)
-# SLIMBOOK_SCREENSAVER_EXCLUDE_EFFECTS=dev_worm
+# TERMINAL_SCREENSAVER_EXCLUDE_EFFECTS=dev_worm
 
 # Font size (default: 16)
-# SLIMBOOK_SCREENSAVER_FONT_SIZE=16
+# TERMINAL_SCREENSAVER_FONT_SIZE=16
 CONFIG_EOF
         echo "  Created default config at $CONFIG_DIR/screensaver.conf"
     else
@@ -205,7 +197,7 @@ configure_gnome() {
 #!/bin/bash
 # Idle monitor for GNOME - launches screensaver after inactivity
 
-SCREENSAVER_DIR="$HOME/.local/share/slimbook-screensaver"
+SCREENSAVER_DIR="$HOME/.local/share/terminal-screensaver"
 
 # Load configuration
 source "$SCREENSAVER_DIR/screensaver.conf"
@@ -218,7 +210,7 @@ is_session_locked() {
         grep -q 'true'
 }
 
-log "Idle monitor started (timeout: ${SLIMBOOK_SCREENSAVER_IDLE_TIMEOUT}s)"
+log "Idle monitor started (timeout: ${TERMINAL_SCREENSAVER_IDLE_TIMEOUT}s)"
 
 while true; do
     # Skip if session is locked
@@ -231,9 +223,9 @@ while true; do
 
         idle_sec=$((idle_ms / 1000))
 
-        if [[ $idle_sec -ge $SLIMBOOK_SCREENSAVER_IDLE_TIMEOUT ]]; then
+        if [[ $idle_sec -ge $TERMINAL_SCREENSAVER_IDLE_TIMEOUT ]]; then
             # Only launch if not already running
-            if ! pgrep -f "class.*slimbook.screensaver" >/dev/null; then
+            if ! pgrep -f "class.*terminal.screensaver" >/dev/null; then
                 "$SCREENSAVER_DIR/screensaver-launch.sh"
             fi
         fi
@@ -247,10 +239,10 @@ IDLE_EOF
 
     # Create autostart entry for GNOME
     mkdir -p ~/.config/autostart
-    cat > ~/.config/autostart/slimbook-screensaver-monitor.desktop << EOF
+    cat > ~/.config/autostart/terminal-screensaver-monitor.desktop << EOF
 [Desktop Entry]
 Type=Application
-Name=Slimbook Screensaver Monitor
+Name=Terminal Screensaver Monitor
 Comment=Launches screensaver after idle timeout
 Exec=$INSTALL_DIR/idle-monitor.sh
 Hidden=false
@@ -285,13 +277,13 @@ show_complete() {
     echo ""
     echo "=== Installation complete (v$version) ==="
     echo ""
-    echo "Configuration: ~/.config/slimbook-screensaver/screensaver.conf"
-    echo "Logs:          ~/.local/state/slimbook-screensaver/screensaver.log"
+    echo "Configuration: ~/.config/terminal-screensaver/screensaver.conf"
+    echo "Logs:          ~/.local/state/terminal-screensaver/screensaver.log"
     echo ""
     echo "Available commands:"
-    echo "  slimbook-screensaver           - Launch screensaver manually"
-    echo "  slimbook-screensaver-toggle    - Enable/disable screensaver"
-    echo "  slimbook-screensaver-uninstall - Uninstall screensaver"
+    echo "  terminal-screensaver           - Launch screensaver manually"
+    echo "  terminal-screensaver-toggle    - Enable/disable screensaver"
+    echo "  terminal-screensaver-uninstall - Uninstall screensaver"
     echo ""
     echo "Supported terminals: alacritty (default), gnome-terminal, ptyxis"
     echo ""
@@ -326,18 +318,19 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Main installation
-echo "=== Installing Slimbook EVO Screensaver ==="
+echo "=== Installing Terminal Screensaver ==="
+
+# Determine repo root (install.sh is in scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Determine source
 if [[ -z "$INSTALL_MODE" ]]; then
     INSTALL_MODE=$(detect_source)
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 if [[ "$INSTALL_MODE" == "local" ]]; then
     echo "  Installing from local files..."
-    SOURCE_DIR="$SCRIPT_DIR"
 else
     echo "  Installing from GitHub release..."
     download_release

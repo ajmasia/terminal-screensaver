@@ -1,13 +1,13 @@
 #!/bin/bash
 # Screensaver launcher for GNOME/Debian - adapted from Omarchy
 
-SCREENSAVER_DIR="$HOME/.local/share/slimbook-screensaver"
+SCREENSAVER_DIR="$HOME/.local/share/terminal-screensaver"
 TTE_BIN="$HOME/.local/bin/tte"
-STATE_FILE="$HOME/.local/state/slimbook-screensaver/screensaver-off"
+STATE_FILE="$HOME/.local/state/terminal-screensaver/screensaver-off"
 
 # Show help
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: slimbook-screensaver [OPTION]"
+    echo "Usage: terminal-screensaver [OPTION]"
     echo ""
     echo "Terminal screensaver with ASCII art animations."
     echo ""
@@ -15,12 +15,12 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "  -f, --force   Launch even if screensaver is disabled"
     echo "  -h, --help    Show this help message"
     echo ""
-    echo "Configuration: ~/.config/slimbook-screensaver/screensaver.conf"
-    echo "Logs:          ~/.local/state/slimbook-screensaver/screensaver.log"
+    echo "Configuration: ~/.config/terminal-screensaver/screensaver.conf"
+    echo "Logs:          ~/.local/state/terminal-screensaver/screensaver.log"
     echo ""
     echo "Related commands:"
-    echo "  slimbook-screensaver-toggle    Enable/disable screensaver"
-    echo "  slimbook-screensaver-uninstall Uninstall screensaver"
+    echo "  terminal-screensaver-toggle    Enable/disable screensaver"
+    echo "  terminal-screensaver-uninstall Uninstall screensaver"
     exit 0
 fi
 
@@ -35,7 +35,7 @@ if [[ ! -x "$TTE_BIN" ]]; then
 fi
 
 # Exit if screensaver is already running (check for terminal with our class)
-if pgrep -f "class.*slimbook.screensaver" >/dev/null; then
+if pgrep -f "class.*terminal.screensaver" >/dev/null; then
     exit 0
 fi
 
@@ -44,15 +44,15 @@ if [[ -f "$STATE_FILE" ]] && [[ "$1" != "-f" ]] && [[ "$1" != "--force" ]]; then
     exit 1
 fi
 
-log "Launching screensaver with terminal: $SLIMBOOK_SCREENSAVER_TERMINAL"
+log "Launching screensaver with terminal: $TERMINAL_SCREENSAVER_TERMINAL"
 
 # Launch screensaver based on configured terminal
-case "$SLIMBOOK_SCREENSAVER_TERMINAL" in
+case "$TERMINAL_SCREENSAVER_TERMINAL" in
     alacritty)
         alacritty \
-            --class slimbook.screensaver \
-            --title "Slimbook Screensaver" \
-            -o "font.size=$SLIMBOOK_SCREENSAVER_FONT_SIZE" \
+            --class terminal.screensaver \
+            --title "Terminal Screensaver" \
+            -o "font.size=$TERMINAL_SCREENSAVER_FONT_SIZE" \
             -o "window.padding.x=0" \
             -o "window.padding.y=0" \
             -o 'window.decorations="None"' \
@@ -62,16 +62,16 @@ case "$SLIMBOOK_SCREENSAVER_TERMINAL" in
         ;;
     gnome-terminal)
         gnome-terminal \
-            --class=slimbook.screensaver \
-            --title="Slimbook Screensaver" \
+            --class=terminal.screensaver \
+            --title="Terminal Screensaver" \
             --full-screen \
             --hide-menubar \
             -- "$SCREENSAVER_DIR/screensaver-cmd.sh" &
         ;;
     ptyxis)
         ptyxis \
-            --class=slimbook.screensaver \
-            --title="Slimbook Screensaver" \
+            --class=terminal.screensaver \
+            --title="Terminal Screensaver" \
             -- "$SCREENSAVER_DIR/screensaver-cmd.sh" &
         ;;
 esac

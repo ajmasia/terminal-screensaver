@@ -1,21 +1,37 @@
 #!/bin/bash
-# Slimbook EVO screensaver uninstaller
+# Terminal screensaver uninstaller
 set -e
 
-INSTALL_DIR="$HOME/.local/share/slimbook-screensaver"
-CONFIG_DIR="$HOME/.config/slimbook-screensaver"
-STATE_DIR="$HOME/.local/state/slimbook-screensaver"
+INSTALL_DIR="$HOME/.local/share/terminal-screensaver"
+CONFIG_DIR="$HOME/.config/terminal-screensaver"
+STATE_DIR="$HOME/.local/state/terminal-screensaver"
 
 show_help() {
-    echo "Slimbook EVO Screensaver Uninstaller"
+    echo "Terminal Screensaver Uninstaller"
     echo ""
-    echo "Usage: slimbook-screensaver-uninstall [OPTIONS]"
+    echo "Usage: terminal-screensaver-uninstall [OPTIONS]"
     echo ""
     echo "Options:"
     echo "  -h, --help     Show this help message"
     echo "  -a, --all      Remove everything including config and logs"
     echo ""
     echo "Without options, config is preserved for reinstallation."
+}
+
+check_installation() {
+    local installed=false
+
+    # Check for any installed components
+    [[ -d "$INSTALL_DIR" ]] && installed=true
+    [[ -L ~/.local/bin/terminal-screensaver ]] && installed=true
+    [[ -f ~/.config/autostart/terminal-screensaver-monitor.desktop ]] && installed=true
+
+    if [[ "$installed" == "false" ]]; then
+        echo "Terminal Screensaver is not installed."
+        echo ""
+        echo "Nothing to uninstall."
+        exit 0
+    fi
 }
 
 REMOVE_ALL=false
@@ -38,22 +54,26 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo "=== Uninstalling Slimbook EVO Screensaver ==="
+# Check if there's anything to uninstall
+check_installation
+
+echo "=== Uninstalling Terminal Screensaver ==="
 
 # Stop idle monitor if running
 echo "[1/5] Stopping running processes..."
 pkill -f "idle-monitor.sh" 2>/dev/null || true
-pkill -f "slimbook.screensaver" 2>/dev/null || true
+# Kill screensaver window (by window class, not by script name to avoid killing ourselves)
+pkill -f "class.*terminal\.screensaver" 2>/dev/null || true
 
 # Remove autostart
 echo "[2/5] Removing autostart entry..."
-rm -f ~/.config/autostart/slimbook-screensaver-monitor.desktop
+rm -f ~/.config/autostart/terminal-screensaver-monitor.desktop
 
 # Remove symlinks
 echo "[3/5] Removing symlinks..."
-rm -f ~/.local/bin/slimbook-screensaver
-rm -f ~/.local/bin/slimbook-screensaver-toggle
-rm -f ~/.local/bin/slimbook-screensaver-uninstall
+rm -f ~/.local/bin/terminal-screensaver
+rm -f ~/.local/bin/terminal-screensaver-toggle
+rm -f ~/.local/bin/terminal-screensaver-uninstall
 rm -f ~/.local/bin/tte
 
 # Remove application files
