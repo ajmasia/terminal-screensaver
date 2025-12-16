@@ -34,7 +34,7 @@ show_help() {
 detect_source() {
     # Check if we're in the repo with the expected structure
     if [[ -f "$REPO_ROOT/src/screensaver-cmd.sh" ]] && \
-       [[ -f "$REPO_ROOT/assets/screensaver.txt" ]] && \
+       [[ -f "$REPO_ROOT/assets/banner.txt" ]] && \
        [[ -f "$REPO_ROOT/VERSION" ]]; then
         echo "local"
     else
@@ -155,12 +155,12 @@ create_config() {
     echo "[4/5] Creating configuration..."
     mkdir -p "$CONFIG_DIR"
 
-    # Copy ASCII art to config dir if it doesn't exist
-    if [[ ! -f "$CONFIG_DIR/screensaver.txt" ]]; then
-        cp "$REPO_ROOT/assets/screensaver.txt" "$CONFIG_DIR/"
-        echo "  Copied screensaver.txt to $CONFIG_DIR/"
+    # Copy banner to config dir if it doesn't exist
+    if [[ ! -f "$CONFIG_DIR/banner.txt" ]]; then
+        cp "$REPO_ROOT/assets/banner.txt" "$CONFIG_DIR/"
+        echo "  Copied banner.txt to $CONFIG_DIR/"
     else
-        echo "  ASCII art already exists at $CONFIG_DIR/screensaver.txt (preserved)"
+        echo "  Banner already exists at $CONFIG_DIR/banner.txt (preserved)"
     fi
 
     if [[ ! -f "$CONFIG_DIR/screensaver.conf" ]]; then
@@ -171,8 +171,8 @@ create_config() {
 # Terminal to use: alacritty (default), gnome-terminal, ptyxis
 TERMINAL_SCREENSAVER_TERMINAL=alacritty
 
-# Path to ASCII art file (default: ~/.config/terminal-screensaver/screensaver.txt)
-# TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/screensaver.txt
+# Path to banner file (default: ~/.config/terminal-screensaver/banner.txt)
+# TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/banner.txt
 
 # Idle timeout in seconds before screensaver activates (default: 120 = 2 min)
 # TERMINAL_SCREENSAVER_IDLE_TIMEOUT=120

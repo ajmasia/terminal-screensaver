@@ -45,9 +45,27 @@ TERMINAL_SCREENSAVER_IDLE_TIMEOUT=120
 TERMINAL_SCREENSAVER_FRAME_RATE=60
 ```
 
-### Custom ASCII Art
+### Custom Banner
 
-Edit `~/.config/terminal-screensaver/screensaver.txt` with your own text or ASCII art.
+Edit `~/.config/terminal-screensaver/banner.txt` with your own text or ASCII art.
+
+**Included banners:**
+
+| File | Description |
+|------|-------------|
+| `banner.txt` | Default "SCREEN SAVER" text |
+| `banner_debian.txt` | Debian swirl logo |
+| `banner_trixie.txt` | Debian Trixie text |
+
+To use an included banner, copy it from the repo:
+```bash
+cp assets/banner_debian.txt ~/.config/terminal-screensaver/banner.txt
+```
+
+Or set a custom path in `screensaver.conf`:
+```bash
+TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/banner_debian.txt
+```
 
 **Online generators:**
 - [patorjk.com/software/taag](https://patorjk.com/software/taag/) - Text to ASCII
@@ -60,8 +78,8 @@ Edit `~/.config/terminal-screensaver/screensaver.txt` with your own text or ASCI
 sudo apt install figlet toilet
 
 # Generate ASCII art
-figlet -f slant "Your Text" > ~/.config/terminal-screensaver/screensaver.txt
-toilet -f future "Your Text" > ~/.config/terminal-screensaver/screensaver.txt
+figlet -f slant "Your Text" > ~/.config/terminal-screensaver/banner.txt
+toilet -f future "Your Text" > ~/.config/terminal-screensaver/banner.txt
 ```
 
 ## Usage
