@@ -7,15 +7,19 @@ REPO_URL="https://github.com/ajmasia/slimbook-screensaver"
 INSTALL_DIR="$HOME/.local/share/slimbook-screensaver"
 CONFIG_DIR="$HOME/.config/slimbook-screensaver"
 
-# Files to install
+# Files to install to INSTALL_DIR
 INSTALL_FILES=(
-    "screensaver.txt"
     "screensaver-cmd.sh"
     "screensaver-launch.sh"
     "screensaver-toggle.sh"
     "screensaver.conf"
     "uninstall.sh"
     "VERSION"
+)
+
+# Files to install to CONFIG_DIR
+CONFIG_FILES=(
+    "screensaver.txt"
 )
 
 show_help() {
@@ -38,7 +42,7 @@ detect_source() {
 
     # Check if we're in the repo with all required files
     local all_files_exist=true
-    for file in "${INSTALL_FILES[@]}"; do
+    for file in "${INSTALL_FILES[@]}" "${CONFIG_FILES[@]}"; do
         if [[ ! -f "$SCRIPT_DIR/$file" ]]; then
             all_files_exist=false
             break
@@ -156,6 +160,14 @@ create_config() {
     echo "[4/5] Creating configuration..."
     mkdir -p "$CONFIG_DIR"
 
+    # Copy ASCII art to config dir if it doesn't exist
+    if [[ ! -f "$CONFIG_DIR/screensaver.txt" ]]; then
+        cp "$SOURCE_DIR/screensaver.txt" "$CONFIG_DIR/"
+        echo "  Copied screensaver.txt to $CONFIG_DIR/"
+    else
+        echo "  ASCII art already exists at $CONFIG_DIR/screensaver.txt (preserved)"
+    fi
+
     if [[ ! -f "$CONFIG_DIR/screensaver.conf" ]]; then
         cat > "$CONFIG_DIR/screensaver.conf" << 'CONFIG_EOF'
 # Slimbook Screensaver Configuration
@@ -164,8 +176,8 @@ create_config() {
 # Terminal to use: alacritty (default), gnome-terminal, ptyxis
 SLIMBOOK_SCREENSAVER_TERMINAL=alacritty
 
-# Path to ASCII art file
-# SLIMBOOK_SCREENSAVER_ASCII_FILE=$HOME/.local/share/slimbook-screensaver/screensaver.txt
+# Path to ASCII art file (default: ~/.config/slimbook-screensaver/screensaver.txt)
+# SLIMBOOK_SCREENSAVER_ASCII_FILE=$HOME/.config/slimbook-screensaver/screensaver.txt
 
 # Idle timeout in seconds before screensaver activates (default: 120 = 2 min)
 # SLIMBOOK_SCREENSAVER_IDLE_TIMEOUT=120
