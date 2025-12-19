@@ -109,15 +109,14 @@ fi
 
 # Update files
 echo "  Installing..."
-cp "$SOURCE_DIR/src/screensaver-cmd.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver-launch.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver-toggle.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver-update.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver.conf" "$INSTALL_DIR/"
+cp "$SOURCE_DIR/src/screensaver-multimonitor.py" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/scripts/uninstall.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/VERSION" "$INSTALL_DIR/"
 
-chmod +x "$INSTALL_DIR/screensaver-cmd.sh"
 chmod +x "$INSTALL_DIR/screensaver-launch.sh"
 chmod +x "$INSTALL_DIR/screensaver-toggle.sh"
 chmod +x "$INSTALL_DIR/screensaver-update.sh"
