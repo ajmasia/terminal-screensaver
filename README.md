@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icons/terminal-screensaver.svg" width="128" height="128" alt="Terminal Screensaver">
+</p>
+
 # Terminal Screensaver
 
 ![Version](https://img.shields.io/github/v/release/ajmasia/terminal-screensaver)

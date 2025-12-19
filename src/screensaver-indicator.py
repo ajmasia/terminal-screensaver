@@ -398,6 +398,7 @@ def main():
         return
 
     try:
+        notify("Started")
         indicator = ScreensaverIndicator()
         indicator.run()
     finally:
