@@ -43,8 +43,8 @@ if [[ ! -x "$TTE_BIN" ]]; then
     exit 1
 fi
 
-# Exit if screensaver is already running (check for terminal with our class)
-if pgrep -f "class.*terminal.screensaver" >/dev/null; then
+# Exit if screensaver is already running
+if pgrep -f "screensaver-multimonitor.py" >/dev/null; then
     exit 0
 fi
 
@@ -53,34 +53,7 @@ if [[ -f "$STATE_FILE" ]] && [[ "$1" != "-f" ]] && [[ "$1" != "--force" ]]; then
     exit 1
 fi
 
-log "Launching screensaver with terminal: $TERMINAL_SCREENSAVER_TERMINAL"
+log "Launching screensaver"
 
-# Launch screensaver based on configured terminal
-case "$TERMINAL_SCREENSAVER_TERMINAL" in
-    alacritty)
-        alacritty \
-            --class terminal.screensaver \
-            --title "Terminal Screensaver" \
-            -o "font.size=$TERMINAL_SCREENSAVER_FONT_SIZE" \
-            -o "window.padding.x=0" \
-            -o "window.padding.y=0" \
-            -o 'window.decorations="None"' \
-            -o 'colors.primary.background="#000000"' \
-            -o 'window.startup_mode="Fullscreen"' \
-            -e "$SCREENSAVER_DIR/screensaver-cmd.sh" &
-        ;;
-    gnome-terminal)
-        gnome-terminal \
-            --class=terminal.screensaver \
-            --title="Terminal Screensaver" \
-            --full-screen \
-            --hide-menubar \
-            -- "$SCREENSAVER_DIR/screensaver-cmd.sh" &
-        ;;
-    ptyxis)
-        ptyxis \
-            --class=terminal.screensaver \
-            --title="Terminal Screensaver" \
-            -- "$SCREENSAVER_DIR/screensaver-cmd.sh" &
-        ;;
-esac
+# Launch GTK4/VTE screensaver (auto-detects monitors)
+python3 "$SCREENSAVER_DIR/screensaver-multimonitor.py" &
