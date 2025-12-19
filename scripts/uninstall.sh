@@ -64,6 +64,8 @@ echo "[1/5] Stopping running processes..."
 pkill -f "idle-monitor.sh" 2>/dev/null || true
 # Kill screensaver window (by window class, not by script name to avoid killing ourselves)
 pkill -f "class.*terminal\.screensaver" 2>/dev/null || true
+# Kill multimonitor screensaver if running
+pkill -f "screensaver-multimonitor.py" 2>/dev/null || true
 
 # Remove autostart
 echo "[2/5] Removing autostart entry..."
@@ -77,13 +79,26 @@ rm -f ~/.local/bin/terminal-screensaver-update
 rm -f ~/.local/bin/terminal-screensaver-uninstall
 rm -f ~/.local/bin/tte
 
+# Ask about config before removing anything else
+echo "[4/5] Cleaning up..."
+REMOVE_CONFIG=false
+if [[ "$REMOVE_ALL" == "true" ]]; then
+    REMOVE_CONFIG=true
+else
+    echo ""
+    read -p "Remove config and logs too? [y/N] " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        REMOVE_CONFIG=true
+    fi
+fi
+
 # Remove application files
-echo "[4/5] Removing application files..."
+echo "[5/5] Removing application files..."
 rm -rf "$INSTALL_DIR"
 
 # Remove config and state if requested
-echo "[5/5] Cleaning up..."
-if [[ "$REMOVE_ALL" == "true" ]]; then
+if [[ "$REMOVE_CONFIG" == "true" ]]; then
     rm -rf "$CONFIG_DIR"
     rm -rf "$STATE_DIR"
     echo "  Removed config and logs"
@@ -94,12 +109,3 @@ fi
 
 echo ""
 echo "=== Uninstallation complete ==="
-
-if [[ "$REMOVE_ALL" != "true" ]]; then
-    echo ""
-    echo "To remove config and logs too, run:"
-    echo "  rm -rf $CONFIG_DIR $STATE_DIR"
-fi
-
-echo ""
-echo "System packages (python3, jq, curl, alacritty) were not removed."

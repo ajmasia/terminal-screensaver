@@ -9,11 +9,11 @@ CONFIG_DIR="$HOME/.config/terminal-screensaver"
 
 # Source files (relative to repo root)
 SRC_FILES=(
-    "src/screensaver-cmd.sh"
     "src/screensaver-launch.sh"
     "src/screensaver-toggle.sh"
     "src/screensaver-update.sh"
     "src/screensaver.conf"
+    "src/screensaver-multimonitor.py"
 )
 
 show_help() {
@@ -33,7 +33,7 @@ show_help() {
 
 detect_source() {
     # Check if we're in the repo with the expected structure
-    if [[ -f "$REPO_ROOT/src/screensaver-cmd.sh" ]] && \
+    if [[ -f "$REPO_ROOT/src/screensaver-launch.sh" ]] && \
        [[ -f "$REPO_ROOT/assets/banner.txt" ]] && \
        [[ -f "$REPO_ROOT/VERSION" ]]; then
         echo "local"
@@ -98,10 +98,9 @@ check_dependencies() {
     command -v jq &>/dev/null || MISSING_PKGS="$MISSING_PKGS jq"
     command -v curl &>/dev/null || MISSING_PKGS="$MISSING_PKGS curl"
 
-    # Check for at least one supported terminal
-    if ! command -v alacritty &>/dev/null && ! command -v gnome-terminal &>/dev/null && ! command -v ptyxis &>/dev/null; then
-        echo "  Error: No supported terminal found (alacritty, gnome-terminal, ptyxis)"
-        exit 1
+    # Check for GTK4 VTE (needed for screensaver display)
+    if ! python3 -c "import gi; gi.require_version('Vte', '3.91')" 2>/dev/null; then
+        MISSING_PKGS="$MISSING_PKGS gir1.2-vte-3.91"
     fi
 
     if [[ -n "$MISSING_PKGS" ]]; then
@@ -138,7 +137,6 @@ install_files() {
     # Copy VERSION
     cp "$REPO_ROOT/VERSION" "$INSTALL_DIR/"
 
-    chmod +x "$INSTALL_DIR/screensaver-cmd.sh"
     chmod +x "$INSTALL_DIR/screensaver-launch.sh"
     chmod +x "$INSTALL_DIR/screensaver-toggle.sh"
     chmod +x "$INSTALL_DIR/screensaver-update.sh"
@@ -164,28 +162,7 @@ create_config() {
     fi
 
     if [[ ! -f "$CONFIG_DIR/screensaver.conf" ]]; then
-        cat > "$CONFIG_DIR/screensaver.conf" << 'CONFIG_EOF'
-# Terminal Screensaver Configuration
-# Edit this file to customize your screensaver
-
-# Terminal to use: alacritty (default), gnome-terminal, ptyxis
-TERMINAL_SCREENSAVER_TERMINAL=alacritty
-
-# Path to banner file (default: ~/.config/terminal-screensaver/banner.txt)
-# TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/banner.txt
-
-# Idle timeout in seconds before screensaver activates (default: 120 = 2 min)
-# TERMINAL_SCREENSAVER_IDLE_TIMEOUT=120
-
-# Animation frame rate (default: 60)
-# TERMINAL_SCREENSAVER_FRAME_RATE=60
-
-# Effects to exclude, comma-separated (default: dev_worm)
-# TERMINAL_SCREENSAVER_EXCLUDE_EFFECTS=dev_worm
-
-# Font size (default: 16)
-# TERMINAL_SCREENSAVER_FONT_SIZE=16
-CONFIG_EOF
+        cp "$REPO_ROOT/assets/screensaver.conf.example" "$CONFIG_DIR/screensaver.conf"
         echo "  Created default config at $CONFIG_DIR/screensaver.conf"
     else
         echo "  Config already exists at $CONFIG_DIR/screensaver.conf (preserved)"
@@ -287,8 +264,6 @@ show_complete() {
     echo "  terminal-screensaver           - Launch screensaver manually"
     echo "  terminal-screensaver-toggle    - Enable/disable screensaver"
     echo "  terminal-screensaver-uninstall - Uninstall screensaver"
-    echo ""
-    echo "Supported terminals: alacritty (default), gnome-terminal, ptyxis"
     echo ""
     echo "The screensaver will automatically activate after idle timeout."
     echo ""

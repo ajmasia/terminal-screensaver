@@ -1,0 +1,11 @@
+# Terminal Screensaver Configuration
+# Edit this file to customize your screensaver
+
+# Path to banner file (default: ~/.config/terminal-screensaver/banner.txt)
+# TERMINAL_SCREENSAVER_ASCII_FILE=$HOME/.config/terminal-screensaver/banner.txt
+
+# Idle timeout in seconds before screensaver activates (default: 120 = 2 min)
+# TERMINAL_SCREENSAVER_IDLE_TIMEOUT=120
+
+# Animation frame rate (default: 60)
+# TERMINAL_SCREENSAVER_FRAME_RATE=60
