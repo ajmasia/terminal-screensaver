@@ -87,6 +87,26 @@ fi
 echo ""
 echo "Updating v$LOCAL_VERSION -> v$REMOTE_VERSION..."
 
+# Check for new dependencies
+echo "  Checking dependencies..."
+MISSING_PKGS=""
+
+if ! python3 -c "import gi; gi.require_version('Vte', '3.91')" 2>/dev/null; then
+    MISSING_PKGS="$MISSING_PKGS gir1.2-vte-3.91"
+fi
+
+if ! python3 -c "import gi; gi.require_version('AyatanaAppIndicator3', '0.1')" 2>/dev/null; then
+    MISSING_PKGS="$MISSING_PKGS gir1.2-ayatanaappindicator3-0.1"
+fi
+
+command -v notify-send &>/dev/null || MISSING_PKGS="$MISSING_PKGS libnotify-bin"
+
+if [[ -n "$MISSING_PKGS" ]]; then
+    echo "  Installing new dependencies:$MISSING_PKGS"
+    sudo apt update
+    sudo apt install -y $MISSING_PKGS
+fi
+
 # Create temp directory
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
@@ -114,6 +134,7 @@ cp "$SOURCE_DIR/src/screensaver-toggle.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver-update.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver.conf" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/src/screensaver-multimonitor.py" "$INSTALL_DIR/"
+cp "$SOURCE_DIR/src/screensaver-indicator.py" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/scripts/uninstall.sh" "$INSTALL_DIR/"
 cp "$SOURCE_DIR/VERSION" "$INSTALL_DIR/"
 
@@ -121,6 +142,14 @@ chmod +x "$INSTALL_DIR/screensaver-launch.sh"
 chmod +x "$INSTALL_DIR/screensaver-toggle.sh"
 chmod +x "$INSTALL_DIR/screensaver-update.sh"
 chmod +x "$INSTALL_DIR/uninstall.sh"
+
+# Restart indicator if running
+if pgrep -f "screensaver-indicator.py" >/dev/null; then
+    echo "  Restarting indicator..."
+    pkill -f "screensaver-indicator.py" 2>/dev/null || true
+    sleep 1
+    python3 "$INSTALL_DIR/screensaver-indicator.py" &
+fi
 
 # Update tte if needed
 echo "  Updating tte..."
