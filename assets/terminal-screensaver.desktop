@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Screensaver
+Comment=ASCII art screensaver with system tray control
+Exec=sh -c 'exec python3 $HOME/.local/share/terminal-screensaver/screensaver-indicator.py'
+Icon=terminal-screensaver
+Categories=Utility;System;
+Keywords=screensaver;terminal;ascii;tray;
+StartupNotify=false
