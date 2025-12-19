@@ -97,6 +97,7 @@ check_dependencies() {
 
     command -v jq &>/dev/null || MISSING_PKGS="$MISSING_PKGS jq"
     command -v curl &>/dev/null || MISSING_PKGS="$MISSING_PKGS curl"
+    command -v notify-send &>/dev/null || MISSING_PKGS="$MISSING_PKGS libnotify-bin"
 
     # Check for GTK4 VTE (needed for screensaver display)
     if ! python3 -c "import gi; gi.require_version('Vte', '3.91')" 2>/dev/null; then

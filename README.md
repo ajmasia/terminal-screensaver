@@ -112,7 +112,7 @@ terminal-screensaver-update --force   # Force reinstall current version
 
 - Python 3.8+
 - GTK4 with VTE (`gir1.2-vte-3.91`)
-- `jq`, `curl`
+- `jq`, `curl`, `libnotify-bin`
 
 ## Contributing
 
