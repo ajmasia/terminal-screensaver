@@ -3,11 +3,19 @@
 
 STATE_FILE="$HOME/.local/state/terminal-screensaver/screensaver-off"
 
+notify() {
+    if command -v notify-send &>/dev/null; then
+        notify-send "Screensaver" "$1"
+    else
+        echo "$1"
+    fi
+}
+
 if [[ -f "$STATE_FILE" ]]; then
     rm -f "$STATE_FILE"
-    notify-send "Screensaver" "Screensaver enabled"
+    notify "Screensaver enabled"
 else
     mkdir -p "$(dirname "$STATE_FILE")"
     touch "$STATE_FILE"
-    notify-send "Screensaver" "Screensaver disabled"
+    notify "Screensaver disabled"
 fi
